@@ -58,7 +58,7 @@
     <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))'>
     <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
     <script type="text/javascript" src="@routes.ClaimController.javascriptRoutes"></script>
-    <script type="text/javascript" src="@routes.Assets.at("/javascripts/index.js")"></script>    
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/index.js")"></script>    
   </head>
 
 
@@ -98,10 +98,13 @@
     </div>
 
     
-<div id="wrapper" class="transaction service">
+<main class="main govuk">
+  <div class="grid-wrapper">
+  <div class="grid">
       @content
       </div>
-  
+      </div>
+</main>  
 
     <footer class="group js-footer" id="footer" role="contentinfo">
 
