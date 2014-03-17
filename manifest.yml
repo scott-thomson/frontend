@@ -1,0 +1,8 @@
+---
+# Manifest for deploying application on CloudFoundry
+applications:
+- name: CarersAllowance
+  memory: 512M
+  host: atos-CADS
+  buildpack: https://github.com/heroku/heroku-buildpack-scala.git
+  instances: 1
