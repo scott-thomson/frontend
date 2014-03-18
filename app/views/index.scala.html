@@ -2,13 +2,60 @@
 
 @main("Welcome to Play Framework") {
 
-    <script type='text/javascript' src='@routes.Assets.at("javascripts/index.min.js")'></script>
+  <script type='text/javascript' src='@routes.Assets.at("javascripts/index.js")'></script>
 
-	<h2>Claim XML:</h2>
-	<textarea id="claimXml"></textarea>
-    <button id="submitClaimButton">Submit XML</button>
-    
-	<h2>Results:</h2>
-	<textarea id="claimResults"></textarea>
-
+  <div class="grid-wrapper">
+  	  <div class="grid grid-3-4">
+	    <select id="nino">
+   	   		<option value="CL100100A">Case 1</option>
+			<option value="CL100101A">Case 2</option>
+			<option value="CL100102A">Case 3</option>
+			<option value="CL100104A">Case 4</option>
+			<option value="CL100105A">Case 5</option>
+			<option value="CL100106A">Case 6</option>
+			<option value="CL100107A">Case 7</option>
+			<option value="CL100108A">Case 8</option>
+			<option value="CL100109A">Case 9</option>
+			<option value="CL100110A">Case 10</option>
+			<option value="CL100111A">Case 11</option>
+			<option value="CL100112A">Case 12</option>
+			<option value="CL100113A">Case 13</option>
+			<option value="CL100114A">Case 14</option>
+			<option value="CL100115A">Case 15</option>
+			<option value="CL100116A">Case 16</option>
+			<option value="CL100117A">Case 17</option>
+			<option value="CL100118A">Case 18</option>
+			<option value="CL100119A">Case 19</option>
+			<option value="CL800119A">Case 20</option>
+			<option value="CL801119A">Case 21</option>
+			<option value="CL1PA100">Case 22</option>
+	    </select>
+	  </div>
+	  <div class="grid grid-1-4">  
+	    <button id="loadXmlButton">Load XML</button>
+	  </div>
+  </div>
+  <div class="grid-wrapper">
+	  <div class="grid">
+	    <h2>Claim XML:</h2>
+	  </div>
+  </div>
+  <div class="grid-wrapper">
+	  <div class="grid grid-3-4">
+	    <textarea id="claimXml"></textarea>
+	  </div>
+	  <div class="grid grid-1-4">  
+	    <button id="submitClaimButton">Submit XML</button>
+	  </div>
+  </div>
+  <div class="grid-wrapper">
+	  <div class="grid">    
+	    <h2>Results:</h2>
+	  </div>
+  </div>
+  <div class="grid-wrapper">
+	  <div class="grid grid-3-4">  
+	    <textarea id="claimResults"></textarea>
+	  </div>
+  </div>
 }

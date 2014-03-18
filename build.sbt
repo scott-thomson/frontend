@@ -18,6 +18,9 @@ libraryDependencies ++= Seq(
   // "group" % "artifact" % "version"
 )
 
-libraryDependencies ++= Seq("org.cddcore" %% "website" % "1.8.5.12")
+libraryDependencies ++= Seq(
+  "org.cddcore" %% "website" % "1.8.5.12",
+  "org.cddcore" %% "legacy" % "1.8.5.12"  
+)
 
 play.Project.playScalaSettings

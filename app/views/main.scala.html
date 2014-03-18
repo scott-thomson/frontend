@@ -17,8 +17,9 @@
     <!--[if IE 7]><link href="@routes.Assets.at("stylesheets/govuk-template-ie7.css")" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
     <!--[if IE 8]><link href="@routes.Assets.at("stylesheets/govuk-template-ie8.css")" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
 
+    <link href="@routes.Assets.at("stylesheets/grids.css")" media="screen" rel="stylesheet" type="text/css" />
     <link href="@routes.Assets.at("stylesheets/govuk-template-print.css")" media="print" rel="stylesheet" type="text/css" />
-
+    <link href="@routes.Assets.at("stylesheets/main.css")" media="screen" rel="stylesheet" type="text/css" />
     <!--[if IE 8]>
     <script type="text/javascript">
       (function(){if(window.opera){return;}
@@ -57,8 +58,7 @@
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
     <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))'>
     <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
-    <script type="text/javascript" src="@routes.ClaimController.javascriptRoutes"></script>
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/index.js")"></script>    
+    <script type="text/javascript" src="@routes.ClaimController.javascriptRoutes"></script> 
   </head>
 
 
@@ -99,11 +99,7 @@
 
     
 <main class="main govuk">
-  <div class="grid-wrapper">
-  <div class="grid">
       @content
-      </div>
-      </div>
 </main>  
 
     <footer class="group js-footer" id="footer" role="contentinfo">
