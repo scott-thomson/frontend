@@ -3,7 +3,7 @@
 # ~~~~
 
 GET     /                           controllers.MainController.index()
-POST    /submitClaim/:claimXml      controllers.ClaimController.submitClaim(claimXml: Int)
+POST    /submitClaim      			controllers.ClaimController.submitClaim
 GET     /assets/javascripts/routes  controllers.ClaimController.javascriptRoutes()
 
 # Map static resources from the /public folder to the /assets URL path
