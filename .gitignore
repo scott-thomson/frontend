@@ -16,6 +16,7 @@ dist
 /.settings
 /project/*-shim.sbt
 /activator-sbt-atmos-akka-shim.sbt
+.cache
 
 # Ignore Play! working directory
 bin
