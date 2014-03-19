@@ -70,7 +70,7 @@ object DateRanges {
     scenario("2010-1-9", 7, "saturday split sunday").expected("2010-1-3").
     scenario("2010-1-4", 7, "monday split sunday").expected("2010-1-3").
     scenario("2010-1-10", 3, "monday split wednesday").expected("2010-1-6").
-    build
+    build.cached
 
   def lastDayOfWeek(d: DateTime, dayToSplit: Int) = firstDayOfWeek(d, dayToSplit).plusDays(6)
 
@@ -103,7 +103,7 @@ object DateRanges {
       val fake = d.from.plusDays(8 - dayToSplit);
       fake.getYear + ":" + fake.weekOfWeekyear.getAsString
     }).toList.sortBy(_._1).collect { case (_, v) => DateRangesToBeProcessedTogether(v) }
-    
+
   val groupByWeek = Engine[List[DateRange], Int, List[DateRangesToBeProcessedTogether]]().title("group by week").
     description("This is not intended to be called on its own. There is quite an onerous contract on the dates being passed in. They must either be an integer number of weeks starting on a dayToBeSplit, or contained within a week").
     useCase("Just one week").
@@ -116,7 +116,8 @@ object DateRanges {
     scenario(List(("2010-1-4", "2010-1-31", "a"), ("2010-2-1", "2010-2-3", "b")), monday, "monday to month wednesday, split monday").
     expected(List(List(("2010-1-4", "2010-1-31", "a")), List((("2010-2-1", "2010-2-3", "b"))))).
     scenario(List(("2010-1-4", "2010-1-6", "a"), ("2010-1-7", "2010-1-9", "b"), ("2010-1-11", "2010-1-31", "c"), ("2010-2-1", "2010-2-3", "d")), monday, "monday to wednesday, thursday to saturday, then monday to month wednesday split monday").
-    expected(List(List(("2010-1-4", "2010-1-6", "a"), ("2010-1-7", "2010-1-9", "b")), List(("2010-1-11", "2010-1-31", "c")), List(("2010-2-1", "2010-2-3", "d")))).
+    expected(List(List(("2010-1-4", "2010-1-6", "a"), ("2010-1-7", "2010-1-9", "b")),
+      List(("2010-1-11", "2010-1-31", "c")), List(("2010-2-1", "2010-2-3", "d")))).
 
     scenario(List(("2010-1-4", "2010-1-9", "a"), ("2010-1-10", "2010-1-30", "b"), ("2010-1-31", "2010-2-3", "c")), sunday, "monday to month wednesday, split sunday").
     expected(List(List(("2010-1-4", "2010-1-9", "a")), List((("2010-1-10", "2010-1-30", "b"))), List(("2010-1-31", "2010-2-3", "c")))).

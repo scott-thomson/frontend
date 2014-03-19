@@ -2,20 +2,16 @@ package controllers
 
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicReference
+import scala.concurrent.duration.Duration
+import scala.language.implicitConversions
 import scala.xml._
 import org.cddcore.engine._
+import org.cddcore.engine.tests.CddJunitRunner
 import org.joda.time._
 import org.joda.time.format._
 import org.junit.runner.RunWith
-import org.cddcore.engine.Xml.boolean
-import org.cddcore.engine.Xml.date
-import org.cddcore.engine.Xml.double
-import org.cddcore.engine.Xml.obj
-import org.cddcore.engine.Xml.optionDate
-import org.cddcore.engine.Xml.string
-import org.cddcore.engine.Xml.xml
-import org.cddcore.engine.Xml.yesNo
-import org.cddcore.engine.tests.CddJunitRunner
+import java.io.File
+import play.api.libs.json._
 
 object World {
   def apply(ninoToCis: NinoToCis): World = World(Xmls.asDate("2010-7-5"), ninoToCis)
@@ -431,20 +427,52 @@ object Carers {
 
     build
 
-  type TimeLineItem = (DateRangesToBeProcessedTogether, List[(DateRange, ReasonsOrAmount)])
+  case class TimeLineItem(events: List[(DateRange, ReasonsOrAmount)]) {
+    val startDate = events.head._1.from
+    val endDate = events.last._1.to
+    val daysInWhichIWasOk = events.foldLeft[Int](0)((acc, tuple) => tuple match {
+      case (dr, Left(_)) => 0
+      case (dr, Right(_)) => dr.days
+    })
+    val wasOk = daysInWhichIWasOk > 2
+    override def toString = s"TimeLineItem($startDate, $endDate, days=$daysInWhichIWasOk, wasOK=$wasOk, dateRange=\n  ${events.mkString("\n  ")})"
+  }
   type TimeLine = List[TimeLineItem]
   /** Returns a DatesToBeProcessedTogether and the days that the claim is valid for */
   def findTimeLine(c: CarersXmlSituation): TimeLine = {
     val dates = interestingDates(c)
     val dayToSplit = DateRanges.sunday
     val result = DateRanges.interestingDatesToDateRangesToBeProcessedTogether(dates, dayToSplit)
-    result.map((drCollection) => {
-      val result =
-        drCollection.dateRanges.map((dr) => {
-          val result = engine(dr.from, c)
-          (dr, result)
-        })
-      (drCollection, result)
+
+    result.map((dateRangeToBeProcessedTogether: DateRangesToBeProcessedTogether) => {
+      TimeLineItem(dateRangeToBeProcessedTogether.dateRanges.map((dr) => {
+        val result = engine(dr.from, c)
+        (dr, result)
+      }))
+    })
+  }
+
+  case class SimplifiedTimelineItem(date: DateTime, award: Int, reason: String)
+  implicit object timeLineFormat extends Format[SimplifiedTimelineItem] {
+
+    def reads(json: JsValue) = JsSuccess(SimplifiedTimelineItem(
+      (json \ "date").as[DateTime],
+      (json \ "award").as[Int],
+      (json \ "reason").as[String]))
+      
+    def writes(stli: SimplifiedTimelineItem) = JsObject(Seq(
+      "date" -> JsString(stli.date.toString("dd:MM:yyyy")),
+      "award" -> JsNumber(stli.award),
+      "reason" -> JsString(stli.reason)))
+  }
+
+  def simplifyTimeLine(t: TimeLine) = {
+    t.flatMap((tli) => {
+      val weeks = Weeks.weeksBetween(tli.startDate, tli.endDate).getWeeks
+      (0 to weeks - 1).map((week) => {
+        val reasons = tli.events.foldLeft(List[ReasonsOrAmount]())((acc, e) => e._2 :: acc)
+        SimplifiedTimelineItem(tli.startDate.plusDays(week * 7), tli.wasOk match { case false => 0; case true => 110 }, reasons.mkString)
+      })
     })
   }
 
@@ -483,12 +511,16 @@ object Carers {
     println(printer(trace._2.toSeq))
     println
     println(trace._1.value.get.mkString("\n"))
-    //    val file = new File("C:\\users\\phil\\Desktop\\test.html")
-    //    Files.printToFile(file)((p) => p.print(printer(trace._2.toSeq)))
+    val file = new File("C:\\users\\phil\\Desktop\\test.html")
+    Files.printToFile(file)((p) => p.print(printer(trace._2.toSeq)))
   }
 
   def main(args: Array[String]) {
-    htmlMain 
+    //    endMain
+    val xml = Xmls.validateClaimWithBreaks(("2010-7-1", "2010-7-10", true))
+    println(xml)
+    println
+    println(findTimeLine(xml).mkString("\n"))
   }
 
 }

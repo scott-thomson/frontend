@@ -7,12 +7,15 @@ import org.cddcore.engine.Engine
 import org.junit.runner.RunWith
 import org.cddcore.engine.tests.CddJunitRunner
 import scala.xml.XML
+import org.joda.time.DateTime
+import org.joda.time.DateTimeConstants
 
-case class Result(value: List[String])
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+
+case class Result(value: List[Carers.SimplifiedTimelineItem])
 
 object ClaimController extends Controller {
-
-  implicit val fooWrites = Json.writes[Result]
 
   def submitClaim() = Action { implicit request =>
     println(request.body)
@@ -21,10 +24,29 @@ object ClaimController extends Controller {
     val xml = scala.xml.XML.loadString(xmlString)
     val world = World(new TestNinoToCis)
     val situation = CarersXmlSituation(world, xml)
-    val results = Carers.guardConditions(Xmls.asDate(dateString), situation)
-    println("Results size is " + results.size)
+    
+    val claimStartDate = situation.claimStartDate()
+    // Find the first payday after the claim submission date - this is the first possible pay date
+    val claimEndDate = situation.claimEndDate()
+    
+    val timeLine = Carers.findTimeLine(situation)
+    println("Number of time lines: " + timeLine.size)
+    val simplifiedTimeLine = Carers.simplifyTimeLine(timeLine)
+    val filteredTimeLine = simplifiedTimeLine.filter(_ match { case Carers.SimplifiedTimelineItem(d, ok, r) => d.isBefore(claimStartDate.plusYears(3)) })
 
-    Ok("here is the results:" + results.mkString)
+    
+    println("Simplified time line")
+    for (stl <- filteredTimeLine) {
+    	println(stl)
+    }
+
+    
+//    val jsonTimeLine = toJson(filteredTimeLine)
+//    println(jsonTimeLine)	
+    
+
+
+    Ok(Json.toJson(filteredTimeLine))
   }
 
   def javascriptRoutes = Action { implicit request =>

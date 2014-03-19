@@ -1,7 +1,11 @@
 @(message: String)
 
-@main("Welcome to Play Framework") {
+@main("Carer's Allowance Decision Service") {
 
+  <div class="grid-wrapper">
+	  <h1>Carer's Allowance Decision Service</h1>
+  </div>
+  
   <script type='text/javascript' src='@routes.Assets.at("javascripts/index.js")'></script>
 
   <div class="grid-wrapper">
@@ -45,8 +49,10 @@
 	    <textarea id="claimXml"></textarea>
 	  </div>
 	  <div class="grid grid-1-4">  
-	  	<input type="text" id="claimDate" value="2010-10-10"></input>
-	    <button id="submitClaimButton">Submit XML</button>
+	    <div><button id="submitClaimButton">Submit XML</button></div>
+	    <br/>
+	    <div>Submission date:</div>
+	    <input type="text" id="claimDate" value="2010-10-10"></input>
 	  </div>
   </div>
   <div class="grid-wrapper">
@@ -59,4 +65,29 @@
 	    <textarea id="claimResults"></textarea>
 	  </div>
   </div>
+  
+<div class='row'>
+	<div class='span12' id='dc-bar-time'>
+		<h4>Award profile
+		<span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+		<!--span><a class="reset" href="javascript:barChartPipelinesByTime.filterAll();dc.redrawAll();" style="display: none;">reset</a></span-->
+	</h4>
+	</div>
+</div>
+
+
+<div class='row'>
+	<div class='span12 table-graph'>
+		<h4>Award details</h4>
+		<table class='table table-hover dc-data-table' id='dc-table-graph'>
+			<thead>
+				<tr class='header'>
+					<th>Award Date</th>
+					<th>Award Amount</th>
+					<th>Reason</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
 }
