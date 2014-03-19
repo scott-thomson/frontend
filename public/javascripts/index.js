@@ -1,9 +1,10 @@
-$(function() {
+﻿$(function() {
 	 
 	// Add a date picker
 	 $(function() {
 		 $("#claimDate").datepicker({ dateFormat: "yy-mm-dd" }).val();		
 		 $("#claimDate").datepicker('setDate', new Date());
+		 $("#results").hide();
 	 });
 	 
 	// add a click handler to the load button
@@ -34,6 +35,7 @@ $(function() {
                 	d.index = i;
                 	try{
                 		d.date = dateParseFormat.parse(d.date); // returns a Date
+                		d.award =+ d.award; 
                 	} catch (err) {
                 		d.date = new Date();
                 	}
@@ -46,21 +48,19 @@ $(function() {
                 var all = awards.groupAll();
                 // Setup dimensions
                 var awardsByDate = awards.dimension(function (d) { return d.date; });
-                var awardAmountByDate = awardsByDate.group(d3.time.month);
+                var awardAmountByDate = awardsByDate.group(d3.time.week).reduceSum(function(d) { return d.award; });
                 var firstAward = awardsByDate.bottom(1)[0].date;
                 var lastAward = awardsByDate.top(1)[0].date;
-                
-                
                 // Create the visualisations
                 barChartAwardsByTime.width(970)
-	                .height(80)
+	                .height(200)
 	                .dimension(awardsByDate)
 	                .group(awardAmountByDate)
 	    			.transitionDuration(1500)
 	    			.centerBar(true)
 	    			.x(d3.time.scale().domain([firstAward, lastAward]))
-	    			.round(d3.time.month.round)
-	    			.xUnits(d3.time.months)
+	    			.round(d3.time.week.round)
+	    			.xUnits(d3.time.weeks)
 	    			.elasticY(true);
                 
                 dataTable.width(800).height(800)
@@ -68,14 +68,15 @@ $(function() {
 	            	.group(function(d) { return "List of awards"})
 	                .size(50)
 	                .columns([
-	                    function(d) { return d.date; },
+	                    function(d) { return formatDate(d.date); },
+	                    function(d) { return "£ " + formatNumber(d.award); },
 	                    function(d) { return d.reason; },
-	                    function(d) { return "�" + formatNumber(d.amount); },
 	                ])
-	                .sortBy(function(d){ return d.date; })
-	            	.order(d3.descending);
+	            	.order(d3.descending)
+	                .sortBy(function(d){ return d.date; });
                 
             	dc.renderAll();
+            	$("#results").show();
                 
             }
         })

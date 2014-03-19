@@ -18,33 +18,19 @@ case class Result(value: List[Carers.SimplifiedTimelineItem])
 object ClaimController extends Controller {
 
   def submitClaim() = Action { implicit request =>
-    println(request.body)
+
     val xmlString = request.body.asFormUrlEncoded.get("claimXml")(0)
     val dateString = request.body.asFormUrlEncoded.get("claimDate")(0)
     val xml = scala.xml.XML.loadString(xmlString)
+
     val world = World(new TestNinoToCis)
-    val situation = CarersXmlSituation(world, xml)
-    
-    val claimStartDate = situation.claimStartDate()
-    // Find the first payday after the claim submission date - this is the first possible pay date
-    val claimEndDate = situation.claimEndDate()
+    val situation = CarersXmlSituation(world, xml)    
     
     val timeLine = Carers.findTimeLine(situation)
-    println("Number of time lines: " + timeLine.size)
     val simplifiedTimeLine = Carers.simplifyTimeLine(timeLine)
-    val filteredTimeLine = simplifiedTimeLine.filter(_ match { case Carers.SimplifiedTimelineItem(d, ok, r) => d.isBefore(claimStartDate.plusYears(3)) })
-
     
-    println("Simplified time line")
-    for (stl <- filteredTimeLine) {
-    	println(stl)
-    }
-
-    
-//    val jsonTimeLine = toJson(filteredTimeLine)
-//    println(jsonTimeLine)	
-    
-
+    // filter time line to 3 years from start date
+    val filteredTimeLine = simplifiedTimeLine.filter(_ match { case Carers.SimplifiedTimelineItem(d, ok, r) => d.isBefore(situation.claimStartDate().plusYears(3)) })
 
     Ok(Json.toJson(filteredTimeLine))
   }
