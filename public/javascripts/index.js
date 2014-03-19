@@ -75,6 +75,8 @@ $(function() {
 	                .sortBy(function(d){ return d.date; })
 	            	.order(d3.descending);
                 
+            	dc.renderAll();
+                
             }
         })
     })
