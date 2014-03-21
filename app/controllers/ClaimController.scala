@@ -47,7 +47,7 @@ object ClaimController extends Controller {
     futureResult.map { response =>
       {
         println(response.body)
-        Ok("Got back:" + (response.json).as[String] )
+        Ok(response.body)
       }
     }.recover {
       case e: Exception =>
