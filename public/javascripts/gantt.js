@@ -2,25 +2,24 @@
  * Sample Gantt chart for DWP work
  */
 
-//var tasks = [
-//{ "startDate":new Date(2014,05,25),
-//  "endDate":new Date(2014,05,26,23,59),
-//  "taskName":"Entitled",
-//  "status":"ENT"} ,
-//
-//  { "startDate":new Date(2014,05,27),
-//  "endDate":new Date(2014,06,12,23,59),
-//  "taskName":"Entitled",
-//  "status":"ENT"} ,
-//
-//{ "startDate":new Date(2014,06,13),
-//  "endDate":new Date(2014,12,27,23,59),
-//  "taskName":"Not Entitled",
-//  "status":"NOT"}
-//
-//];
+var tasks = [
+{ "startDate":new Date(2014,05,25),
+  "endDate":new Date(2014,05,26,23,59),
+  "taskName":"Entitled",
+  "status":"ENT"} ,
 
-console.debug( $("#claimResults") )
+  { "startDate":new Date(2014,05,27),
+  "endDate":new Date(2014,06,12,23,59),
+  "taskName":"Entitled",
+  "status":"ENT"} ,
+
+{ "startDate":new Date(2014,06,13),
+  "endDate":new Date(2014,12,27,23,59),
+  "taskName":"Not Entitled",
+  "status":"NOT"}
+
+];
+
 
 var taskStatus = {
     "ENT" : "bar-entitled",
