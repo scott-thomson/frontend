@@ -1,4 +1,3 @@
-import controllers.routes;
 import org.junit.*;
 
 import play.mvc.*;

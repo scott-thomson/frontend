@@ -75,7 +75,7 @@ object DateRanges {
   def lastDayOfWeek(d: DateTime, dayToSplit: Int) = firstDayOfWeek(d, dayToSplit).plusDays(6)
 
   private def zipAllButLastAndAddLast = (dates: List[(DateTime, String)]) => {
-    val d = dates.sortBy(_._1.getMillis).removeDuplicates
+    val d = dates.sortBy(_._1.getMillis).distinct
     val dWithoutLast = d.take(d.size - 1)
     val allButLast = dWithoutLast.zip(dWithoutLast.tail).collect { case (from, to) => DateRange(from._1, to._1.minusDays(1), from._2) }
     val last = DateRange(dWithoutLast.last._1, d.last._1, dWithoutLast.last._2)
@@ -134,7 +134,7 @@ object DateRanges {
           x.fromToEndOfFirstWeek(dayToSplit),
           x.middleSection(dayToSplit),
           x.startOfLastWeekToEnd(dayToSplit))
-      val result = raw.removeDuplicates.filter(_.valid)
+      val result = raw.distinct.filter(_.valid)
       result
     }).
     scenario(("2010-1-4", "2010-1-5", "a"), monday, "Monday to Tuesday, split monday").expected(List(("2010-1-4", "2010-1-5", "a"))).

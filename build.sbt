@@ -2,6 +2,8 @@ name := """CarersDigital"""
 
 version := "1.0-SNAPSHOT"
 
+scalaVersion := "2.10.1"
+
 libraryDependencies ++= Seq(
   // Select Play modules
   //jdbc,      // The JDBC connection pool and the play.api.db API
@@ -21,8 +23,8 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.cddcore" %% "website" % "1.8.5.12",
-  "org.cddcore" %% "legacy" % "1.8.5.12"  
+  "org.cddcore" %% "website" % "1.8.5.13",
+  "org.cddcore" %% "legacy" % "1.8.5.13"  
 )
 
 play.Project.playScalaSettings
