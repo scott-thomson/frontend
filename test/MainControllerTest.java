@@ -20,24 +20,24 @@ public class MainControllerTest {
         assertThat(a).isEqualTo(2);
     }
 
-    @Test
-    public void indexTemplateShouldContainTheStringThatIsPassedToIt() {
-        running(fakeApplication(), new Runnable() {
-            public void run() {
-                Content html = views.html.index.render("Your new application is ready.");
-                assertThat(contentType(html)).isEqualTo("text/html");
-                assertThat(contentAsString(html)).contains("Your new application is ready.");
-            }
-        });
-    }
+//    @Test
+//    public void indexTemplateShouldContainTheStringThatIsPassedToIt() {
+//        running(fakeApplication(), new Runnable() {
+//            public void run() {
+//                Content html = views.html.index.render("Your new application is ready.");
+//                assertThat(contentType(html)).isEqualTo("text/html");
+//                assertThat(contentAsString(html)).contains("Your new application is ready.");
+//            }
+//        });
+//    }
 
-    @Test
-    public void indexShouldContainTheCorrectString() {
-        running(fakeApplication(), new Runnable() {
-            public void run() {
-
-            }
-        });
-    }
+//    @Test
+//    public void indexShouldContainTheCorrectString() {
+//        running(fakeApplication(), new Runnable() {
+//            public void run() {
+//
+//            }
+//        });
+//    }
 
 }
