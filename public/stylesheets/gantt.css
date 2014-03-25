@@ -17,14 +17,10 @@ html,body,#wrapper {
 }
 
 .bar {
-	fill: #33b5e5;
-}
-
-.bar-not-entitled {
 	fill: #CC0000;
 }
 
-.bar-not-entitled:hover {
+.bar:hover {
 	fill: #CC99EE;
 }
 .bar-entitled {

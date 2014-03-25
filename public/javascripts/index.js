@@ -1,10 +1,39 @@
-﻿$(function() {
-	 
+﻿// Create some sample gantt chart data
+
+var tasks = new Array(Object());        		
+var timeLine = new Array(Object());
+
+var taskStatus = {
+    "ENT" : "bar-entitled",
+    "NOT" : "bar"
+};
+
+var taskNames = [ "Entitled", "Not Entitled" ];
+
+var gantt = d3.gantt()
+
+var format = "%d %b";
+
+var dateFormat = d3.time.format("%Y-%m-%d");
+
+var dateReviver = function(key, value) {
+	if (key=="startDate") {
+		return new Date(dateFormat.parse(value));
+	} else {
+		if (key=="endDate") { 
+			if (value == "3999-12-31") { return null } 
+			return new Date(d3.time.minute.offset(dateFormat.parse(value),+1439)); // Add 23hrs 59min to each end date/time
+		}
+	}
+	return value;
+};
+
+$(function() {
+
 	// Add a date picker
 	 $(function() {
 		 $("#claimDate").datepicker({ dateFormat: "yy-mm-dd" }).val();		
 		 $("#claimDate").datepicker('setDate', new Date());
-		 $("#results").hide();
 	 });
 	 
 	// add a click handler to the load button
@@ -20,74 +49,47 @@
         jsRoutes.controllers.ClaimController.submitClaim().ajax({
         	method: "POST",
         	data: {claimDate:$("#claimDate").val() , claimXml: $("#claimXml").val()},
-        	error: function(err) {console.debug("Boo Hoo!"); console.debug(err);},
-        	success: function(data) {console.log(data); 
-        		$("#claimResults").val(data);
+        	error: function(err) {console.debug("POST failed:"); console.debug(err);},
+        	success: function(data) {
+//        		console.log("Web Service call returned : "+data);
+
+        		// Parse the JSON using a Reviver function to cleanse date formats and open-ended dates
+        		tasks=JSON.parse(data,dateReviver);
         		
-        		}
-        	});
-    });
-})
+        		for (i=0;i<tasks.length;i++) {
+       		    	if (tasks[i].wasOk) {tasks[i].taskName="Entitled"} else {tasks[i].taskName="Not Entitled"} 
+       		    	tasks[i].status = tasks[i].events[0];
+       		    }
+        		
+//        		console.log("After processing :"+JSON.stringify(tasks));
+        		
+        		gantt = d3.gantt().taskTypes(taskNames).taskStatus(taskStatus).tickFormat(format).height(160).width(600);
+
+        		// Remove any existing timeline and insert a replacement
+        		$("#timeline").empty()
+        		gantt(tasks,"#timeline");
+
+    			var tooltip = d3.select("body").append("div")   
+        			.attr("class", "tooltip")               
+        			.style("opacity", 0);
+
+    			d3.select(".gantt-chart").selectAll("rect")
+    			.on("mouseover", function(d){
+    				tooltip.transition()
+    				.duration(200)
+    				.style("opacity", .9);      
+    				tooltip.html(d.taskName+" ("+d.status+ ")<br/>" + "From: " + d.startDate.toDateString() + "<br/>" + "To: " + (((d.endDate)==null)?"Infinity":d.endDate.toDateString()) ) //+ "<br/>" + d3.select(this).attr("transform")
+    				.style("left", (d3.event.pageX) + "px")
+    				.style("top", (d3.event.pageY - 28) + "px");
+    			})                  
+    			.on("mouseout", function(d) {       
+    				tooltip.transition()        
+    				.duration(500)      
+    				.style("opacity", 0);   
+				});
+        		
+        	} // Close of success
+        }); // Close of ajax
+    }); // Close of click event
+}) // Close of main function
         
-//        	method: "POST",
-//        	data: {claimDate:$("#claimDate").val() , claimXml: $("#claimXml").val()},
-//            success: function(data) {
-//            	console.log(data);
-//                $("#claimResults").val(data);
-//                
-//             // Various formatters.
-//                var formatNumber = d3.format(",d"),
-//                  formatChange = d3.format("+,d"),
-//                  formatDate = d3.time.format("%B %d, %Y"),
-//                  formatTime = d3.time.format("%I:%M %p");
-//                var dateParseFormat = d3.time.format("%d:%m:%Y");
-//                // Cast variables to appropriate types
-//                data.forEach(function(d, i) {
-//                	d.index = i;
-//                	try{
-//                		d.date = dateParseFormat.parse(d.date); // returns a Date
-//                		d.award =+ d.award; 
-//                	} catch (err) {
-//                		d.date = new Date();
-//                	}
-//                });
-//                // Create the chart objects
-//                var barChartAwardsByTime = dc.barChart("#dc-bar-time");
-//                var dataTable = dc.dataTable("#dc-table-graph");
-//            	// Run the data through crossfilter
-//                var awards = crossfilter(data);
-//                var all = awards.groupAll();
-//                // Setup dimensions
-//                var awardsByDate = awards.dimension(function (d) { return d.date; });
-//                var awardAmountByDate = awardsByDate.group(d3.time.week).reduceSum(function(d) { return d.award; });
-//                var firstAward = awardsByDate.bottom(1)[0].date;
-//                var lastAward = awardsByDate.top(1)[0].date;
-//                // Create the visualisations
-//                barChartAwardsByTime.width(970)
-//	                .height(200)
-//	                .dimension(awardsByDate)
-//	                .group(awardAmountByDate)
-//	    			.transitionDuration(1500)
-//	    			.centerBar(true)
-//	    			.x(d3.time.scale().domain([firstAward, lastAward]))
-//	    			.round(d3.time.week.round)
-//	    			.xUnits(d3.time.weeks)
-//	    			.elasticY(true);
-//                
-//                dataTable.width(800).height(800)
-//	                .dimension(awardsByDate)
-//	            	.group(function(d) { return "List of awards"})
-//	                .size(50)
-//	                .columns([
-//	                    function(d) { return formatDate(d.date); },
-//	                    function(d) { return "£ " + formatNumber(d.award); },
-//	                    function(d) { return d.reason; },
-//	                ])
-//	            	.order(d3.descending)
-//	                .sortBy(function(d){ return d.date; });
-//                
-//            	dc.renderAll();
-//            	$("#results").show();
-//                
-//            }
-//        })
