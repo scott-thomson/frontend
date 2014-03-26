@@ -34,23 +34,45 @@ d3.gantt = function() {
 
     var y = d3.scale.ordinal().domain(taskTypes).rangeRoundBands([ 0, height - margin.top - margin.bottom ], .1);
     
-    var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.time.format(tickFormat)).tickSubdivide(true)
+    var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.time.format(tickFormat))
 	    .tickSize(8).tickPadding(8);
 
     var yAxis = d3.svg.axis().scale(y).orient("left").tickSize(0);
 
     var initTimeDomain = function() {
 	    timeDomainStart = tasks[0].startDate;
-	    timeDomainEnd = tasks[tasks.length - 1].endDate;
+	    timeDomainEnd = tasks[tasks.length - 1].endDate; // On a closed-ended claim show until the very end
 	    if (timeDomainEnd === null) {
-	    	timeDomainEnd = d3.time.month.offset(timeDomainStart,+3)
+	    	if (tasks.length >= 2) {
+	    		timeDomainEnd = d3.time.month.offset(tasks[tasks.length - 2].endDate,+1) // Show 1 month beyond end
+	    	} else {
+	    		timeDomainEnd = d3.time.month.offset(timeDomainStart,+2) // Just show 2 months
+	    	}
 	    }
     };
 
     var initAxis = function() {
 		x = d3.time.scale().domain([ timeDomainStart, timeDomainEnd ]).range([ 0, width ]).clamp(true);
 		y = d3.scale.ordinal().domain(taskTypes).rangeRoundBands([ 0, height - margin.top - margin.bottom ], .1);
-		xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.time.format(tickFormat)).tickSize(8).tickPadding(8).ticks(d3.time.monday,1);
+		xAxis = d3.svg.axis().scale(x).orient("bottom").tickSize(8).tickPadding(8);
+		var dateOffset = (x.domain()[1]-x.domain()[0]);
+		if (dateOffset > 15768000000000) { // 500 years 
+			xAxis.ticks(d3.time.year,200).tickFormat(d3.time.format("%Y"));
+		} else if (dateOffset > 3153600000000) { // 100 Years
+			xAxis.ticks(d3.time.year,50).tickFormat(d3.time.format("%Y"));
+		} else if (dateOffset > 1576800000000) { // 50 Years
+			xAxis.ticks(d3.time.year,10).tickFormat(d3.time.format("%Y"));
+		} else if (dateOffset > 315360000000) { // 10 Years
+			xAxis.ticks(d3.time.year,2).tickFormat(d3.time.format("%Y"));
+		} else if (dateOffset > 63072000000) { // 2 Years
+			xAxis.ticks(d3.time.year,1).tickFormat(d3.time.format("%Y"));
+		} else if (dateOffset > 15552000000) { // 6 Months
+			xAxis.ticks(d3.time.month,3).tickFormat(d3.time.format("%b %Y"));
+		} else if (dateOffset > 7776000000) { // 3 Months
+			xAxis.ticks(d3.time.month,1).tickFormat(d3.time.format("%b %Y"));
+		} else {
+			xAxis.ticks(d3.time.monday,1).tickFormat(d3.time.format("%d %b"));
+		}
 		yAxis = d3.svg.axis().scale(y).orient("left").tickSize(0);
     };
     

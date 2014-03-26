@@ -1,7 +1,6 @@
 ﻿// Create some sample gantt chart data
 
 var tasks = new Array(Object());        		
-var timeLine = new Array(Object());
 
 var taskStatus = {
     "ENT" : "bar-entitled",
@@ -10,7 +9,7 @@ var taskStatus = {
 
 var taskNames = [ "Entitled", "Not Entitled" ];
 
-var gantt = d3.gantt()
+var gantt = d3.gantt();
 
 var format = "%d %b";
 
@@ -51,7 +50,7 @@ $(function() {
         	data: {claimDate:$("#claimDate").val() , claimXml: $("#claimXml").val()},
         	error: function(err) {console.debug("POST failed:"); console.debug(err);},
         	success: function(data) {
-//        		console.log("Web Service call returned : "+data);
+//        		console.log("Web Service call returned : \n"+data);
 
         		// Parse the JSON using a Reviver function to cleanse date formats and open-ended dates
         		tasks=JSON.parse(data,dateReviver);
