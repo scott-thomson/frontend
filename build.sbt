@@ -1,8 +1,8 @@
-name := """CarersDigital"""
+name := """CADigital"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
   // Select Play modules
@@ -22,9 +22,9 @@ libraryDependencies ++= Seq(
   // "group" % "artifact" % "version"
 )
 
-libraryDependencies ++= Seq(
-  "org.cddcore" %% "website" % "1.8.5.13",
-  "org.cddcore" %% "legacy" % "1.8.5.13"  
-)
+//libraryDependencies ++= Seq(
+//  "org.cddcore" %% "website" % "1.8.5.14",
+//  "org.cddcore" %% "legacy" % "1.8.5.14"  
+//)
 
 play.Project.playScalaSettings

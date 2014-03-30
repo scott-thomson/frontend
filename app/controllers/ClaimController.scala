@@ -16,8 +16,6 @@ import org.joda.time.DateTimeConstants
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-case class Result(value: List[Carers.SimplifiedTimelineItem])
-
 object ClaimController extends Controller {
 
   def submitClaim() = Action.async { implicit request =>
